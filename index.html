@@ -73,9 +73,13 @@
         <input type="file" id="documento" accept=".pdf" />
 
         <!-- Canvas para la firma -->
-        <h3>Dibuja tu firma:</h3>
+        <h3>Dibuja tu firma o carga una firma escaneada:</h3>
         <canvas id="canvasFirma" width="500" height="200"></canvas>
         <button id="clearCanvas">Limpiar Firma</button>
+
+        <!-- Botón para subir la firma escaneada -->
+        <h3>O carga una firma escaneada:</h3>
+        <input type="file" id="uploadSignature" accept="image/*" />
 
         <!-- Campo para Aclaración -->
         <h3>Aclaración:</h3>
@@ -171,6 +175,23 @@
         // Limpiar el canvas
         document.getElementById('clearCanvas').addEventListener('click', function() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // Funcionalidad para cargar una firma escaneada
+        document.getElementById('uploadSignature').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas antes de cargar la imagen
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // Dibujar la imagen en el canvas ajustada
+                    }
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
         });
 
         // Obtener la fecha de hoy en formato dd/mm/aaaa
